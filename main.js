@@ -47,4 +47,37 @@ fetch('https://www.course-api.com/javascript-store-products')
         `;
     }
     
+// Task 4 Handle Errors Gracefully
+
+async function loadProducts() {
+    try {
+        loadingMessage.style.display = 'block';
+        errorMessage.style.display = 'none';
+
+        const response = await fetch('https://www.course-api.com/javascript-store-products');
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch products');
+        }
+
+        const products = await response.json();
+        const productsHTML = products.map(product => createProductCard(product)).join('');
+        productsContainer.innerHTML = productsHTML;
+
+    } catch (error) {
+        console.log('Error:', error);
+        errorMessage.style.display = 'block';
+        productsContainer.innerHTML = '';
     
+    } finally {
+        loadingMessage.style.display = 'none';
+    }
+}
+
+const retryButton = document.createElement('button');
+retryButton.textContent = 'Try Again';
+retryButton.onclick = loadProducts;
+retryButton.style.cssText = 'padding: 10px 20px; margin-left: 10px;';
+errorMessage.appendChild(retryButton);
+
+loadProducts();
